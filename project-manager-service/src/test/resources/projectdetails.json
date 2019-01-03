@@ -1,0 +1,32 @@
+{
+		"projectId": 1,
+		"project": "Project 1",
+		"startDate": "2018-01-09T00:00:00.000+0000",
+		"endDate": "2018-01-09T00:00:00.000+0000",
+		"priority": 20,
+		"status":"Active",
+		"user": {
+			"userId": 1,
+			"firstName": "Sujana",
+			"lastName": "Daniel",
+			"employeeId": 397538
+		},
+		"task": [
+			{
+				"taskId": 1,
+				"task": "Task 1",
+				"startDate": "2018-01-09T00:00:00.000+0000",
+				"endDate": "2018-01-09T00:00:00.000+0000",
+				"priority": 15,
+				"status": "Completed"
+			},
+			{
+				"taskId": 2,
+				"task": "Task 2",
+				"startDate": "2018-01-09T00:00:00.000+0000",
+				"endDate": "2018-01-09T00:00:00.000+0000",
+				"priority": 5,
+				"status": "Active"
+			}
+		]
+}

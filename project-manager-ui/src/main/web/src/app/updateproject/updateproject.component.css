@@ -1,0 +1,22 @@
+hr{
+    border-color: #191970 !important;
+}
+.project-container {
+    color: #000000;
+    background-color:#DCDCDC;
+    position: relative;
+    padding: 1px 0px 15px 25px;
+}
+.priority-container{
+    color: #000000;
+    background-color: #DCDCDC;
+    position: relative;
+    padding: 30px 0px 15px 40px;
+    height: 92px;
+}
+.font-14{
+    font-size: 14px;
+}
+.pointer-cursor{
+    cursor: pointer;
+}

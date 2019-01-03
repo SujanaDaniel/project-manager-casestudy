@@ -1,0 +1,128 @@
+<div class="container margin-top-15">
+    <div class="row">
+        <div class="col-md-5 col-sm-12 col-xs-12">
+            <div class="row">
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                    <label for="project" class="control-label label-font font-15">Project:</label>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                    <input name="project" id ="project" class="margin-top-12 form-control" type="text" #project="ngModel" [(ngModel)]="projManagerModel.project" readonly>
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                    <button type="button" class="btn btn-info rounded-button" (click)="getProjects()">Search</button>
+                </div>
+            </div>        
+        </div>
+        <div class="col-md-7 col-sm-12 col-xs-12">
+            <div class="row">
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                    <label for="sortTaskBy" class="control-label label-font">Sort Task By:</label>
+                </div>
+                <div class="col-md-10 col-sm-12 col-xs-12">
+                    <button type="button" class="btn mx-1" (click)="orderBy('startDate')">Start Date</button>
+                    <button type="button" class="btn mx-1" (click)="orderBy('endDate')">End Date</button>
+                    <button type="button" class="btn mx-1" (click)="orderBy('priority')">Priority</button>
+                    <button type="button" class="btn mx-1" (click)="orderBy('completedTaskCount')">Completed</button>
+                </div>                      
+            </div>   
+        </div>
+    </div>
+    <div class="row margin-top-30"> 
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <hr style="border-top: dotted 1px #191970">
+        </div>  
+    </div>
+    <div class="row">
+        <div class="table-responsive">
+            <table *ngIf='null != taskList && taskList.length > 0' class="table app-custom-table">
+                <tbody *ngFor="let task of taskList | sortPipe:field">
+                <tr>
+                    <th>Task</th>
+                    <th>Parent</th>
+                    <th>Priority</th>
+                    <th>Start</th>   
+                    <th>End</th>
+                    <th></th> 
+                    <th></th>              
+                </tr>
+                <tr>
+                    <td class = "task-container">{{task.task}}</td>
+                    <div class = "parent-task-container">
+                        <td>{{task.parentTask}}</td>
+                    </div>
+                    <td>{{task.priority}}</td>
+                    <td>{{task.startDate | date : 'MM/dd/yyyy'}}</td>
+                    <td>{{task.endDate | date : 'MM/dd/yyyy'}}</td>
+                    <td>
+                        <button [hidden]="task.status === 'Completed'" type="button" class="btn btn-success float-right" (click)="editTask(task)">Edit</button> 
+                    </td>
+                    <td>
+                        <button [hidden]="task.status === 'Completed'" type="button" class="btn btn-danger" (click)="endTask(task)">End Task</button> 
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div *ngIf = "!hasTasks" id="errorDiv" aria-live="assertive" role="alert" class="row margin-top-35 margin-bottom-30">
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        <div class="col-md-8 col-sm-12 col-xs-12 text-center">
+            <p>
+                <span>There are no tasks added currently. Click on Add Task to add them.</span>
+            </p>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+    </div>
+    <button data-toggle="modal" data-target="#projectModalShow" id='projectModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#deleteSuccessMessageShow" id='deleteSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+</div>
+<div id="projectModalShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-10 col-sm-12 col-xs-12">
+                        <input type="text" id="search" class="form-control margin-bottom-30" placeholder="Search Project..." [(ngModel)]="projSearch" />
+                        <hr class="margin-bottom-30" style="border-top: dotted 1px #191970">
+                        <div class="margin-top-20" *ngIf="hasProjects">
+                            <ul class="list-group margin-top-10" *ngFor="let project of projectList | searchFilter:projSearch:'task'">
+                                <li class="list-group-item pointer-cursor" (click)="selectProject(project)">{{project.project}}</li>
+                            </ul>
+                            <p class="text-center" *ngIf="(projectList | searchFilter:projSearch:'task').length === 0">
+                                No results matching your search criteria
+                            </p>
+                        </div>
+                        <div class="margin-top-20" *ngIf="!hasProjects">
+                            <p class="text-center">
+                                There are no Projects available.
+                            </p>
+                        </div>
+                        <hr class="margin-top-30" style="border-top: dotted 1px #191970">
+                    </div>  
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div> 
+                </div>    
+            </div>
+            <div class="modal-footer" autofocus>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="deleteSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss="modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The Task has been deleted successfully.</p>	
+            </div>           	
+            <div class="modal-footer" autofocus>
+                <button type="button" id="deleteSuccessMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>

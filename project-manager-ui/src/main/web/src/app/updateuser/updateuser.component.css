@@ -1,0 +1,10 @@
+hr{
+    border-color: #191970 !important;
+}
+.user-container {
+    color: #000000;
+    background-color: #DCDCDC;
+    position: relative;
+    padding: 10px;
+    border-radius: 5px;
+}

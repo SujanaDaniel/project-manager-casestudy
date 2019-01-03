@@ -1,0 +1,297 @@
+<div class="container margin-top-15">
+    <form #projectForm = "ngForm" method="post" (ngSubmit)="updateProject(projManagerModel)" novalidate>
+        <div class="row margin-bottom-30" [class.hasError]="(project.invalid && (project.dirty || project.touched))">
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <label for="project" class="control-label label-font font-15">Project:</label>
+            </div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <input name="project" id ="project" #project = "ngModel" [(ngModel)]='projManagerModel.project' class="margin-top-12 form-control" type="text" required>
+                <div class="margin-top-10" role="alert" aria-live="assertive" id="projectErrorDiv" *ngIf="(project.dirty || project.touched) && project.invalid">
+                    <div class="error-message-cmn-cls" *ngIf="project.errors.required">
+                        <span class="required-field-error"> </span>
+                        <span class="error-msg">Required field.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <input type="checkbox" id="hasStartEndDate" name="hasStartEndDate" #hasStartEndDate = "ngModel" [(ngModel)]="projManagerModel.hasStartEndDate" (click)="setStartEndDate()" required/>
+                <label for="hasStartEndDate">Set Start and End Date</label>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <div class="row" [class.hasError]="errorFlag">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                        <input class="margin-top-12 form-control" type="date" id="startDate" name="startDate" [disabled]="!projManagerModel.hasStartEndDate" #startDate = "ngModel" [ngModel]="projManagerModel.startDate | date:'yyyy-MM-dd'" (ngModelChange)="projManagerModel.startDate=$event" required/> 
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                        <input class="margin-top-12 form-control" type="date" id="endDate" name="endDate" [disabled]="!projManagerModel.hasStartEndDate" #endDate = "ngModel" [ngModel]="projManagerModel.endDate | date:'yyyy-MM-dd'" (ngModelChange)="projManagerModel.endDate=$event" (blur)="compareStartEndDate()" required/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="error-message-cmn-cls margin-top-20" *ngIf="errorFlag">
+                            <span class="required-field-error"> </span>
+                            <span class="error-msg">Start Date should not be greater than the end date.</span>
+                        </div>
+                    </div>          
+                </div> 
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12 margin-top-30">
+                <label for="priority" class="control-label label-font font-15">Priority:</label>
+            </div>
+            <div class="col-md-8 col-sm-12 col-xs-12 margin-top-5">
+                <span>0</span>
+                <span class="float-right">{{projManagerModel.priority != 0 ? projManagerModel.priority : 30}}</span>
+                <span> <input type="range" min="0" max="30" value="0" class="slider" id="priority" name="priority" #priority = "ngModel" [(ngModel)]="projManagerModel.priority"></span>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>   
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <label for="manager" class="control-label label-font font-15">Manager:</label>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <input name="manager" #manager = "ngModel" id ="manager" class="margin-top-12 form-control" type="text" [(ngModel)]="projManagerModel.userName" readonly>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-4 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <button type="button" class="btn btn-info rounded-button" (click)="searchManager(projManagerModel.userName)">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>  
+        </div>
+        <div class="row">
+            <div class="col-md-7 col-sm-12 col-xs-12"></div>
+            <div class="col-md-3 col-sm-12 col-xs-12">
+                <div class="row margin-bottom-30 margin-top-30">
+                    <div class="col-md-3 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <button *ngIf="projAction === 'add'" type="submit" class="btn btn-success float-right" [disabled]="projectForm.invalid">Add</button>
+                        <button *ngIf="projAction === 'update'" type="submit" class="btn btn-success float-right" [disabled]="projectForm.invalid">Update</button>      
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <button type="button" class="btn btn-primary" (click)="resetForm()">Reset</button>
+                    </div>
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div>
+                </div> 
+            </div>                    
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>    
+        </div>
+    </form>
+    <div class="row margin-bottom-30"> 
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+            <hr>
+        </div>   
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>   
+    </div>
+    <div *ngIf="hasProjects">
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <input name="projSearch" id ="projSearch" [(ngModel)]='projSearch' class="form-control" type="text" placeholder="Search...">
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>  
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-3 col-sm-12 col-xs-12"> 
+                        <label for="sortBy" class="control-label label-font">Sort By:</label>
+                    </div>
+                    <div class="col-md-9 col-sm-12 col-xs-12"> 
+                        <button type="button" class="btn mx-1" (click)="orderBy('startDate')">Start Date</button>
+                        <button type="button" class="btn mx-1" (click)="orderBy('endDate')">End Date</button>
+                        <button type="button" class="btn mx-1" (click)="orderBy('priority')">Priority</button>
+                        <button type="button" class="btn mx-1" (click)="orderBy('completedTaskCount')">Completed</button>
+                    </div>
+                </div>  
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>  
+        </div>
+        <div class="row margin-bottom-15"  *ngFor = "let project of projectList | searchFilter : projSearch :'updateProject' | sortPipe:field:'updateProject'">
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="project-container">
+                                    <div class="row margin-top-15">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <label for="project" class="control-label font-14"><b>Project: </b>{{project.project}}</label>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-top-5">
+                                        <div class="col-md-6 col-sm-12 col-xs-12">
+                                            <label for="noOfTasks" class="control-label font-14"><b>No of Tasks: </b>{{project.totalTaskCount}}</label>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 col-xs-12">
+                                            <label for="completed" class="control-label font-14"><b>Completed: </b>{{project.completedTaskCount}}</label>
+                                        </div>     
+                                    </div>
+                                    <div class="row margin-top-5">
+                                        <div class="col-md-6 col-sm-12 col-xs-12">
+                                            <label for="startDate" class="control-label font-14"><b>Start Date: </b>{{project.startDate | date: 'MM/dd/yyyy'}}</label>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 col-xs-12">
+                                            <label for="endDate" class="control-label font-14"><b>End Date: </b>{{project.endDate | date: 'MM/dd/yyyy'}}</label>
+                                        </div>
+                                    </div>
+                                </div>                          
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-12 col-xs-12">
+                        <div class="row margin-top-5">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <label for="priority" class="control-label label-font"><b>Priority:</b></label>
+                            </div>          
+                        </div>
+                        <div class="row margin-top-5">
+                            <div class="col-md-12 col-sm-12 col-xs-12 priority-container">
+                                <span>{{project.priority}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-12 col-xs-12">
+                        <div class="row margin-top-20">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <button type="button" class="btn btn-success mx-1" (click)="updateAProject(project)">Update</button>
+                            </div>          
+                        </div>
+                        <div class="row margin-top-15">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <button type="button" class="btn btn-danger mx-1" (click)="suspendAProject(project)">Suspend</button>
+                            </div>          
+                        </div>        
+                    </div>
+                </div>  
+                <div class="margin-top-30"> 
+                    <hr style="border-top: dotted 1px #191970">
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>  
+        </div>
+    </div>
+    <div class="row margin-bottom-50" *ngIf="!hasProjects">
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        <div class="col-md-8 col-sm-12 col-xs-12 text-center">
+            <p>
+                <span>You do not have any added projects. Added Projects will be listed here.</span>
+            </p>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+    </div>
+    <button data-toggle="modal" data-target="#managerModalShow" id='managerModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#addSuccessMessageShow" id='addSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#updateSuccessMessageShow" id='updateSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#deleteSuccessMessageShow" id='deleteSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#failureMessageShow" id='failureModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+</div>
+<div id="managerModalShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-10 col-sm-12 col-xs-12">
+                        <input type="text" id="managerSearch" class="form-control margin-bottom-30" placeholder="Search Manager..." [(ngModel)]="managerSearch" />
+                        <hr class="margin-bottom-30" style="border-top: dotted 1px #191970">
+                        <div class="margin-top-20" *ngIf="hasUsers">
+                            <ul class="list-group margin-top-10" *ngFor="let user of userList | searchFilter:managerSearch:'updateUser'">
+                                <li class="list-group-item pointer-cursor" (click)="selectUser(user)">{{user.firstName + " " + user.lastName}}</li>
+                            </ul>
+                            <p class="text-center" *ngIf="(userList | searchFilter:managerSearch:'updateUser').length === 0">
+                                No results matching your search criteria
+                            </p>
+                        </div>
+                        <div class="margin-top-20" *ngIf="!hasUsers">
+                            <p class="text-center">
+                                There are no Users available.
+                            </p>
+                        </div>
+                        <hr class="margin-top-30" style="border-top: dotted 1px #191970">
+                    </div>  
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div> 
+                </div>    
+            </div>
+            <div class="modal-footer" autofocus>
+            </div>
+        </div>
+    </div>
+</div> 
+<div id="addSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The Project has been added successfully.</p>	
+            </div>
+            <div class="modal-footer" autofocus>
+                <button type="button" id="addSuccessMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss = "modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>  
+<div id="updateSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The Project has been edited successfully.</p>	
+            </div>           	
+            <div class="modal-footer" autofocus>
+                <button type="button" id="updateSuccessMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss = "modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>  
+<div id="deleteSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The Project has been deleted successfully.</p>	
+            </div>           	
+            <div class="modal-footer" autofocus>
+                <button type="button" id="deleteSuccessMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss = "modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>  
+<div id="failureMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">Unable to add/update the project. Please try again later.</p>	
+            </div>
+            <div class="modal-footer" autofocus>
+                <button type="button" id="failureMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss = "modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>     
+<loader class="text-align-center" [hidden]="!loader"></loader> 

@@ -1,0 +1,337 @@
+<div class="container margin-top-15">
+    <form #taskForm = "ngForm" method="post" (ngSubmit)="updateTask(projManagerModel)" novalidate>
+        <div class="row margin-bottom-30" [class.hasError]="(project.invalid && (project.dirty || project.touched))">
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <label for="project" class="control-label label-font font-15">Project:</label>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <input name="project" id ="project" #project = "ngModel" [(ngModel)]='projManagerModel.project' class="margin-top-12 form-control" type="text" required readonly>
+                <div class="margin-top-10" role="alert" aria-live="assertive" id="projectErrorDiv" *ngIf="(project.dirty || project.touched) && project.invalid">
+                    <div class="error-message-cmn-cls" *ngIf="project.errors.required">
+                        <span class="required-field-error"> </span>
+                        <span class="error-msg">Required field.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-4 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <button type="button" class="btn btn-info rounded-button" (click)="getProjects()" [disabled]="taskAction === 'update'">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row margin-bottom-30" [class.hasError]="(task.invalid && (task.dirty || task.touched))">
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <label for="task" class="control-label label-font font-15">Task:</label>
+            </div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <input name="task" id ="task" #task = "ngModel" [(ngModel)]='projManagerModel.task' class="margin-top-12 form-control" type="text" required>
+                <div class="margin-top-10" role="alert" aria-live="assertive" id="taskErrorDiv" *ngIf="(task.dirty || task.touched) && task.invalid">
+                    <div class="error-message-cmn-cls" *ngIf="task.errors.required">
+                        <span class="required-field-error"> </span>
+                        <span class="error-msg">Required field.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+            <div class="col-md-10 col-sm-12 col-xs-12">
+                <input type="checkbox" id="enableParentTask" name="enableParentTask" #enableParentTask = "ngModel" [(ngModel)]="projManagerModel.enableParentTask" (change)="isParentTask(projManagerModel.enableParentTask)" [disabled]="taskAction === 'update'"/>
+                <label for="enableParentTask">Parent Task</label>
+            </div>
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12 margin-top-30">
+                <label for="priority" class="control-label label-font font-15">Priority:</label>
+            </div>
+            <div class="col-md-8 col-sm-12 col-xs-12 margin-top-5">
+                <span>0</span>
+                <span class="float-right">{{projManagerModel.priority != 0 ? projManagerModel.priority : 30}}</span>
+                <span> <input type="range" min="0" max="30" value="0" class="slider" id="priority" name="priority" #priority = "ngModel" [(ngModel)]="projManagerModel.priority" [disabled]="projManagerModel.enableParentTask"></span>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <label for="parentTask" class="control-label label-font font-15">Parent Task:</label>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <input name="parentTask" #parentTask = "ngModel" id ="parentTask" class="margin-top-12 form-control" type="text" [(ngModel)]="projManagerModel.parentTask" [disabled]="projManagerModel.enableParentTask" readonly>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-4 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <button type="button" class="btn btn-info rounded-button" (click)="getParentTasks()" [disabled]="projManagerModel.enableParentTask">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12" [class.hasError]="(startDate.invalid && (startDate.dirty || startDate.touched)) || dateErrorFlag">
+                <label for="startDate" class="control-label label-font font-15">Start Date:</label>
+            </div>
+            <div class="col-md-3 col-sm-12 col-xs-12" [class.hasError]="(startDate.invalid && (startDate.dirty || startDate.touched)) || dateErrorFlag">
+                <input name="startDate" #startDate = "ngModel" id ="startDate" class="margin-top-12 form-control" type="date" [ngModel]="projManagerModel.startDate | date:'yyyy-MM-dd'" (ngModelChange)="projManagerModel.startDate=$event" required [disabled]="projManagerModel.enableParentTask">
+                <div class="margin-top-10" role="alert" aria-live="assertive" id="startDateErrorDiv" *ngIf="(startDate.dirty || startDate.touched) && startDate.invalid">
+                    <div class="error-message-cmn-cls" *ngIf="startDate.errors.required">
+                        <span class="required-field-error"> </span>
+                        <span class="error-msg">Required field.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12 padding-right-neutralize" [class.hasError]="(endDate.invalid && (endDate.dirty || endDate.touched)) || dateErrorFlag">
+                <label for="endDate" class="control-label label-font font-15">End Date:</label>
+            </div>
+            <div class="col-md-3 col-sm-12 col-xs-12" [class.hasError]="(endDate.invalid && (endDate.dirty || endDate.touched)) || dateErrorFlag">
+                <input name="endDate" #endDate = "ngModel" id ="endDate" class="margin-top-12 form-control" type="date" [ngModel]="projManagerModel.endDate | date:'yyyy-MM-dd'" (ngModelChange)="projManagerModel.endDate=$event" (blur)="compareStartEndDate()" required [disabled]="projManagerModel.enableParentTask">
+                <div class="margin-top-10" role="alert" aria-live="assertive" id="endDateErrorDiv" *ngIf="(endDate.dirty || endDate.touched) && endDate.invalid">
+                    <div class="error-message-cmn-cls" *ngIf="endDate.errors.required">
+                        <span class="required-field-error"> </span>
+                        <span class="error-msg">Required field.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row row margin-bottom-30" *ngIf="dateErrorFlag">
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+            <div class="col-md-10 col-sm-12 col-xs-12">
+                <div class="error-message-cmn-cls">
+                    <span class="required-field-error"> </span>
+                    <span class="error-msg">Start Date should not be greater than the end date.</span>
+                </div>
+            </div>
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <label for="manager" class="control-label label-font font-15">User:</label>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <input name="manager" #manager = "ngModel" id ="manager" class="margin-top-12 form-control" type="text" [(ngModel)]="projManagerModel.userName" [disabled]="projManagerModel.enableParentTask" required readonly>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-4 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <button type="button" class="btn btn-info rounded-button" (click)="getUsers()" [disabled]="projManagerModel.enableParentTask">Search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div *ngIf="errorFlag" id="errorDiv" aria-live="assertive" role="alert" class="row margin-bottom-30">
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+                <div class="ant-anthem-alert errorMsg alert-pattern-v2 ant-negative">
+                    <div class="media">
+                    <div class="media-left media-middle">
+                        <span class="fa fa-exclamation"></span>
+                    </div>
+                    <div class="media-body media-middle ">
+                        <p>
+                            <span id="backEndErrorMsg"> {{errorMessage}}</span>
+                        </p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row margin-bottom-30">
+            <div class="col-md-7 col-sm-12 col-xs-12"></div>
+            <div class="col-md-3 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-3 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <button *ngIf = "taskAction === 'add'" type="submit" class="btn btn-success float-right" [disabled]="taskForm.invalid">Add Task</button>
+                        <button *ngIf = "taskAction === 'update'" type="submit" class="btn btn-success float-right" [disabled]="taskForm.invalid">Update Task</button>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <button type="button" class="btn btn-primary" (click)="resetForm()">Reset</button>
+                    </div>
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div>
+                </div> 
+            </div>                    
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>    
+        </div>
+    </form>
+    <button data-toggle="modal" data-target="#projectModalShow" id='projectModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>      
+    <button data-toggle="modal" data-target="#parentTaskModalShow" id='parentTaskModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>      
+    <button data-toggle="modal" data-target="#userModalShow" id='userModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>      
+    <button data-toggle="modal" data-target="#addTaskSuccessMessageShow" id='addTaskSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#addPTaskSuccessMessageShow" id='addPTaskSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#updateSuccessMessageShow" id='updateSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#failureMessageShow" id='failureModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>      
+</div>
+<div id="projectModalShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-10 col-sm-12 col-xs-12">
+                        <input type="text" id="search" class="form-control margin-bottom-30" placeholder="Search Project..." [(ngModel)]="projSearch" />
+                        <hr class="margin-bottom-30" style="border-top: dotted 1px #191970">
+                        <div class="margin-top-20" *ngIf="hasProjects">
+                            <ul class="list-group margin-top-10" *ngFor="let project of projectList | searchFilter:projSearch:'task'">
+                                <li class="list-group-item pointer-cursor" (click)="selectProject(project)">{{project.project}}</li>
+                            </ul>
+                            <p class="text-center" *ngIf="(projectList | searchFilter:projSearch:'task').length === 0">
+                                No results matching your search criteria
+                            </p>
+                        </div>
+                        <div class="margin-top-20" *ngIf="!hasProjects">
+                            <p class="text-center">
+                                There are no Projects available.
+                            </p>
+                        </div>
+                        <hr class="margin-top-30" style="border-top: dotted 1px #191970">
+                    </div>  
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div> 
+                </div>    
+            </div>
+            <div class="modal-footer" autofocus>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="parentTaskModalShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-10 col-sm-12 col-xs-12">
+                        <input type="text" id="parentSearch" class="form-control margin-bottom-30" placeholder="Search Parent Task..." [(ngModel)]="parentSearch" />
+                        <hr class="margin-bottom-30" style="border-top: dotted 1px #191970">
+                        <div class="margin-top-20" *ngIf="hasParentTasks">
+                            <ul class="list-group margin-top-10" *ngFor="let parentTask of parentTaskList | searchFilter:parentSearch:'parentTask'">
+                                <li class="list-group-item pointer-cursor" (click)="selectParentTask(parentTask)">{{parentTask.parentTask}}</li>
+                            </ul>
+                            <p class="text-center" *ngIf="(parentTaskList | searchFilter:parentSearch:'parentTask').length === 0">
+                                No results matching your search criteria
+                            </p>
+                        </div>
+                        <div class="margin-top-20" *ngIf="!hasParentTasks">
+                            <p class="text-center">
+                                There are no Parent Tasks available.
+                            </p>
+                        </div>
+                        <hr class="margin-top-30" style="border-top: dotted 1px #191970">
+                    </div>  
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div> 
+                </div>    
+            </div>
+            <div class="modal-footer" autofocus>
+            </div>
+        </div>
+    </div>
+</div>  
+<div id="userModalShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div>
+                    <div class="col-md-10 col-sm-12 col-xs-12">
+                        <input type="text" id="userSearch" class="form-control margin-bottom-30" placeholder="Search User..." [(ngModel)]="userSearch" />
+                        <hr class="margin-bottom-30" style="border-top: dotted 1px #191970">
+                        <div class="margin-top-20" *ngIf="hasUsers">
+                            <ul class="list-group margin-top-10" *ngFor="let user of userList | searchFilter:userSearch:'updateUser'">
+                                <li class="list-group-item pointer-cursor" (click)="selectUser(user)">{{user.firstName}} {{user.lastName}}</li>
+                            </ul>
+                            <p class="text-center" *ngIf="(userList | searchFilter:userSearch:'updateUser').length === 0">
+                                No results matching your search criteria
+                            </p>
+                        </div>
+                        <div class="margin-top-20" *ngIf="!hasUsers">
+                            <p class="text-center">
+                                There are not Users available.
+                            </p>
+                        </div>
+                        <hr class="margin-top-30" style="border-top: dotted 1px #191970">
+                    </div>  
+                    <div class="col-md-1 col-sm-12 col-xs-12"></div> 
+                </div>    
+            </div>
+            <div class="modal-footer" autofocus>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="addTaskSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="navigateToView()" data-dismiss="modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The Task has been added successfully.</p>	
+            </div>
+            <div class="modal-footer" autofocus>
+                <button type="button" id="addTaskSuccessMessageShowOk" autofocus class="btn btn-success" (click)="navigateToView()" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div> 
+<div id="addPTaskSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="resetForm()" data-dismiss="modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The Parent Task has been added successfully.</p>	
+            </div>
+            <div class="modal-footer" autofocus>
+                <button type="button" id="addPTaskSuccessMessageShowOk" autofocus class="btn btn-success" (click)="resetForm()" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div> 
+<div id="updateSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="navigateToView()" data-dismiss="modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The Task has been updated successfully.</p>	
+            </div>           	
+            <div class="modal-footer" autofocus>
+                <button type="button" id="updateSuccessMessageShowOk" autofocus class="btn btn-success" (click)="navigateToView()" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div> 
+<div id="failureMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="navigateToView()" data-dismiss="modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">Unable to update the task. Please try again later.</p>	
+            </div>
+            <div class="modal-footer" autofocus>
+                <button type="button" id="failureMessageShowOk" autofocus class="btn btn-success" (click)="navigateToView()" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div> 

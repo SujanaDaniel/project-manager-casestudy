@@ -1,0 +1,202 @@
+<div class="container margin-top-15">
+    <form #userForm = "ngForm" method="post" (ngSubmit)="updateUser(projManagerModel)" novalidate>
+     <div class="row margin-bottom-15" [class.hasError]="firstName.invalid && (firstName.dirty || firstName.touched)">
+         <div class="col-md-2 col-sm-12 col-xs-12">
+             <label for="firstName" class="control-label label-font font-15"><b>First Name:</b></label>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+            <input name="firstName" id ="firstName" #firstName = "ngModel" [(ngModel)]='projManagerModel.firstName' class="form-control" type="text" required>
+            <div class="margin-top-10" role="alert" aria-live="assertive" id="firstNameErrorDiv" *ngIf="(firstName.dirty || firstName.touched) && firstName.invalid">
+                <div class="error-message-cmn-cls" *ngIf="firstName.errors.required">
+                     <span class="required-field-error"> </span>
+                     <span class="error-msg">Required field.</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+    </div>
+    <div class="row margin-bottom-15" [class.hasError]="lastName.invalid && (lastName.dirty || lastName.touched)">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+            <label for="lastName" class="control-label label-font font-15"><b>Last Name:</b></label>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+            <input name="lastName" id ="lastName" #lastName = "ngModel" [(ngModel)]='projManagerModel.lastName' class="form-control" type="text" required>
+            <div class="margin-top-10" role="alert" aria-live="assertive" id="lastNameErrorDiv" *ngIf="(lastName.dirty || lastName.touched) && lastName.invalid">
+                <div class="error-message-cmn-cls" *ngIf="lastName.errors.required">
+                    <span class="required-field-error"> </span>
+                    <span class="error-msg">Required field.</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+    </div>
+    <div class="row margin-bottom-15" [class.hasError]="employeeId.invalid && (employeeId.dirty || employeeId.touched)">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+            <label for="employeeId" class="control-label label-font font-15"><b>Employee Id:</b></label>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+            <input name="employeeId" id ="employeeId" #employeeId = "ngModel" [(ngModel)]='projManagerModel.employeeId' class="form-control" type="text" required pattern="^[0-9]+$">
+            <div class="margin-top-10" role="alert" aria-live="assertive" id="employeeIdErrorDiv" *ngIf="(employeeId.dirty || employeeId.touched) && employeeId.invalid">
+                <div class="error-message-cmn-cls" *ngIf="employeeId.invalid && (employeeId.dirty || employeeId.touched)">
+                    <span class="required-field-error"> </span>
+                    <span class="error-msg" *ngIf="employeeId.errors.required">Required field.</span>
+                    <span class="error-msg" *ngIf="employeeId.errors.pattern">Should be numbers.</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12"></div>
+    </div>
+    <div class="row margin-top-30">
+        <div class="col-md-5 col-sm-12 col-xs-12"></div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+            <div class="row">
+                <div class="col-md-6 col-sm-12 col-xs-12"></div> 
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                   <button *ngIf="userAction === 'add' || userAction === 'end'" type="submit" class="btn btn-success" [disabled]="userForm.invalid">Add</button>
+                   <button *ngIf="userAction === 'update'" type="submit" class="btn btn-success" [disabled]="userForm.invalid">Update</button>
+                </div> 
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                   <button type="button" class="btn btn-primary" (click)="resetForm()">Reset</button>    
+                </div> 
+            </div>
+        </div>      
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>    
+    </div>
+    </form>
+    <div class="row margin-top-30"> 
+        <div class="col-md-10 col-sm-12 col-xs-12">
+            <hr>
+        </div>   
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>   
+    </div>
+    <div *ngIf="hasUsers" class="row margin-top-30">
+        <div class="col-md-5 col-sm-12 col-xs-12">
+            <input name="userSearch" id ="userSearch" [(ngModel)]='userSearch' class="form-control" type="text" placeholder="Search...">
+        </div>
+        <div class="col-md-5 col-sm-12 col-xs-12"> 
+            <div class="row">
+                <div class="col-md-2 col-sm-12 col-xs-12"> 
+                    <label for="sort" class="control-label label-font">Sort:</label>
+                </div>
+                <div class="col-md-10 col-sm-12 col-xs-12"> 
+                    <button type="button" class="btn mx-1" (click)="orderBy('firstName')">First Name</button>    
+                    <button type="button" class="btn mx-1" (click)="orderBy('lastName')">Last Name</button>       
+                    <button type="button" class="btn mx-1" (click)="orderBy('employeeId')">Id</button>            
+                </div>              
+            </div>               
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+    </div>
+    <div *ngIf="hasUsers">
+        <div *ngFor = "let user of userList | searchFilter : userSearch :'updateUser' | sortPipe:field:'updateUser'">
+            <div class="row margin-top-30 margin-bottom-15"> 
+                <div class="col-md-10 col-sm-12 col-xs-12">
+                    <hr style="border-top: dotted 1px #191970">
+                </div>   
+                <div class="col-md-2 col-sm-12 col-xs-12"></div>   
+            </div>
+            <div class="row margin-bottom-15">
+                <div class="col-md-10 col-sm-12 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-10 col-sm-12 col-xs-12">
+                            <div name="firstNameResult" id ="firstNameResult" class="user-container">
+                                {{user.firstName}}
+                            </div>
+                            <div name="lastNameResult" id ="lastNameResult" class="margin-top-15 user-container">
+                                {{user.lastName}}
+                            </div>
+                            <div name="empResult" id ="empResult" class="margin-top-15 user-container">
+                                {{user.employeeId}}
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-12 col-xs-12">
+                            <button type="button" class="btn btn-info" (click)="editUser(user)">Edit</button>            
+                            <button type="button" class="btn btn-danger margin-top-15" (click)="deleteUser(user)">Delete</button>
+                        </div>
+                    </div> 
+                </div>
+                <div class="col-md-2 col-sm-12 col-xs-12"></div>        
+            </div>
+        </div>    
+        <div class="row margin-top-15 margin-bottom-15"> 
+            <div class="col-md-10 col-sm-12 col-xs-12">
+                <hr style="border-top: dotted 1px #191970">
+            </div>   
+            <div class="col-md-2 col-sm-12 col-xs-12"></div>   
+        </div> 
+    </div>
+    <div *ngIf="!hasUsers" class="row margin-top-35 margin-bottom-30">
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+            <p>
+                <span>You do not have any added users. Added users will be listed here.</span>
+            </p>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12"></div>
+    </div>
+    <button data-toggle="modal" data-target="#addSuccessMessageShow" id='addSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#updateSuccessMessageShow" id='updateSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#deleteSuccessMessageShow" id='deleteSuccessModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+    <button data-toggle="modal" data-target="#failureMessageShow" id='failureModal' [hidden]='true' data-backdrop="static" data-keyboard="false">Open Modal</button>
+</div>
+<div id="addSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The User has been added successfully.</p>	
+            </div>
+			<div class="modal-footer" autofocus>
+				<button type="button" id="addSuccessMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss = "modal">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>  
+<div id="updateSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The User has been edited successfully.</p>	
+            </div>           	
+            <div class="modal-footer" autofocus>
+                <button type="button" id="updateSuccessMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss = "modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>  
+<div id="deleteSuccessMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">The User has been deleted successfully.</p>	
+            </div>           	
+            <div class="modal-footer" autofocus>
+                <button type="button" id="deleteSuccessMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss = "modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>  
+<div id="failureMessageShow" class="modal fade in" role="dialog" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+                <button type="button" class="close" (click)="modalRefresh()" data-dismiss = "modal" autofocus aria-label="close"><span class="glyphicon glyphicon-remove"></span></button>      
+            </div>	
+            <div class="modal-body">
+                <p class="text-center">Unable to add/update the user. Please try again later.</p>	
+            </div>
+			<div class="modal-footer" autofocus>
+				<button type="button" id="failureMessageShowOk" autofocus class="btn btn-success" (click)="modalRefresh()" data-dismiss = "modal">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>     
+<loader class="text-align-center" [hidden]="!loader"></loader>

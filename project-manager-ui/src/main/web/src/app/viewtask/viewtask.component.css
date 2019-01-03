@@ -1,0 +1,16 @@
+.task-container {
+    color: #000000;
+    background-color: #D3D3D3;
+    position: relative;
+    
+}
+.parent-task-container {
+    color: #000000;
+    background-color: #D3D3D3;
+    position: relative;
+    margin-left: 0.5em;
+    min-height: 63px;
+}
+.table th, .table td {
+    border: none;
+}

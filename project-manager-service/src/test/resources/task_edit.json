@@ -1,0 +1,21 @@
+{
+	"taskId":1,
+	"task": "Task 1",
+	"startDate": "2018-01-09T00:00:00.000+0000",
+	"endDate": "2018-01-09T00:00:00.000+0000",
+	"status": "Active",
+	"parent": {
+		 "parentId":1,
+		 "parentTask":"Parent Task 1",
+		 "projectId":1
+	},
+	"priority": 16,
+	"project": {
+		"projectId": 1,
+		"project": "Project 1",
+		"priority": 26,
+		"startDate": "2018-01-09T00:00:00.000+0000",
+		"endDate": "2018-01-09T00:00:00.000+0000",
+		"status":"Active"
+	}
+}
