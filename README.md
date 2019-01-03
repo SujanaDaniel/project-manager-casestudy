@@ -1,7 +1,7 @@
 Project Manager Case Study Build Notes:
 
 Application Structure: 
-Parent maven project(project-manager-aggregator) with two dependent modules - For building and packaging both service and UI into a jar.
+Parent maven project(project-manager-aggregator) with two dependent modules - For building and packaging both the service and UI into a jar.
 project-manager-service - Maven Spring boot project for exposing rest endpoints + MySql.
 project-manager-ui - Angular CLI for building UI.
 
@@ -20,10 +20,14 @@ Repo:
 
 Commands for final build:
 Maven Build:
-clean install -e	[run the command for project-manager-service project which will build UI and service project and create the final jar with required resources] package docker:build	[run the command for project-manager-service project which will copy the jar from target and create image in the remote docker container]
+clean install -e [run the command for project-manager-service project which will build UI and service project and create the final jar with required resources] 
+package docker:build [run the command for project-manager-service project which will copy the jar from target and create image in the remote docker container]
 
 To run the created image and validate the image:
-Connect to the remote docker machine To check whether the image is created in docker container dockerx image ls To run the created image in docker dockerx run -p 8085:8089 463657-project-manager:latest To check whether the image is running in docker[open new cmd prompt and run the cmd] dockerx ps To validate whether the application is working fine using curl command i) connect to bash shell in the container. [take container id of the image created from dockers ps] dockerx exec -it [CONTAINER_ID] bash ii) check whether application is working [it will return custom techincal error from the service exposed since mysql db is not available in docker] curl http://localhost:8085/project-manager/getTaskInfo
+Connect to the remote docker machine 
+To check whether the image is created in docker container dockerx images 397538-project-manager 
+To run the created image in docker dockerx run -p 8088:8088 397538-project-manager:latest 
+To check whether the image is running in docker[open new cmd prompt and run the cmd] dockerx ps
 
 Jenkins: 
 Make sure Jenkins is installed and running Configure Maven and JDK in jenkins with name maven3 and jdk1.8 
